@@ -19,7 +19,7 @@ body {
 }
 
 .container {
-  max-width: 800px;
+  max-width: 900px;
   margin: 60px auto;
   padding: 20px;
 }
@@ -28,7 +28,6 @@ h1 {
   font-size: 64px;
   margin-bottom: 10px;
   color: #60a5fa;
-  text-shadow: 0 0 20px rgba(96, 165, 250, 0.4);
 }
 
 .subtitle {
@@ -38,7 +37,7 @@ h1 {
 }
 
 .card {
-  background: rgba(30, 41, 59, 0.85);
+  background: rgba(30, 41, 59, 0.88);
 
   backdrop-filter: blur(10px);
 
@@ -49,24 +48,24 @@ h1 {
   margin-bottom: 25px;
 
   border: 1px solid rgba(255,255,255,0.08);
-
-  box-shadow:
-    0 10px 30px rgba(0,0,0,0.35);
 }
 
 h2 {
   margin-top: 0;
-  margin-bottom: 20px;
   color: #93c5fd;
 }
 
 input,
-textarea {
+textarea,
+select {
+
   width: 100%;
+
   padding: 15px;
+
   margin-bottom: 15px;
 
-  border: 1px solid rgba(255,255,255,0.08);
+  border: none;
 
   border-radius: 10px;
 
@@ -74,14 +73,9 @@ textarea {
 
   box-sizing: border-box;
 
-  background: rgba(15, 23, 42, 0.9);
+  background: rgba(15, 23, 42, 0.95);
 
   color: white;
-}
-
-input::placeholder,
-textarea::placeholder {
-  color: #94a3b8;
 }
 
 textarea {
@@ -90,6 +84,7 @@ textarea {
 }
 
 button {
+
   width: 100%;
 
   padding: 15px;
@@ -112,25 +107,16 @@ button {
 
   cursor: pointer;
 
-  transition: 0.25s;
-
   margin-bottom: 10px;
 }
 
 button:hover {
-
-  transform: translateY(-2px);
-
-  box-shadow:
-    0 10px 25px rgba(37, 99, 235, 0.4);
-}
-
-#result {
-  margin-top: 30px;
+  opacity: 0.9;
 }
 
 .result-card {
-  background: rgba(51, 65, 85, 0.9);
+
+  background: rgba(51, 65, 85, 0.92);
 
   padding: 20px;
 
@@ -139,27 +125,6 @@ button:hover {
   margin-top: 15px;
 
   border-left: 5px solid #0ea5e9;
-}
-
-.error-item {
-  background: rgba(51, 65, 85, 0.9);
-
-  padding: 15px;
-
-  border-radius: 12px;
-
-  margin-top: 12px;
-
-  border-left: 4px solid #2563eb;
-
-  transition: 0.2s;
-}
-
-.error-item:hover {
-
-  transform: translateX(5px);
-
-  background: rgba(71, 85, 105, 0.95);
 }
 
 h3 {
