@@ -10,7 +10,13 @@ import {
 const db = getFirestore(app);
 
 const searchBtn = document.getElementById("searchBtn");
+const createBtn = document.getElementById("createBtn");
+
 const result = document.getElementById("result");
+
+
+
+// FEHLER SUCHEN
 
 searchBtn.addEventListener("click", async () => {
 
@@ -40,10 +46,18 @@ searchBtn.addEventListener("click", async () => {
       found = true;
 
       result.innerHTML = `
-        <div class="card">
+        <div class="result-card">
           <h2>${data.code}</h2>
-          <p><strong>Fehler:</strong> ${data.title}</p>
-          <p><strong>Lösung:</strong> ${data.solution}</p>
+
+          <p>
+            <strong>Fehler:</strong>
+            ${data.title}
+          </p>
+
+          <p>
+            <strong>Lösung:</strong>
+            ${data.solution}
+          </p>
         </div>
       `;
     }
@@ -52,27 +66,50 @@ searchBtn.addEventListener("click", async () => {
   if(!found) {
 
     result.innerHTML = `
-      <div class="card">
+      <div class="result-card">
         <h2>Fehler nicht gefunden</h2>
-
-        <button id="saveBtn">
-          Fehler speichern
-        </button>
       </div>
     `;
-
-    document
-      .getElementById("saveBtn")
-      .addEventListener("click", async () => {
-
-        await addDoc(collection(db, "fehler"), {
-          code: errorCode,
-          title: "Neuer Fehler",
-          solution: "Noch keine Lösung vorhanden"
-        });
-
-        alert("Fehler gespeichert");
-      });
   }
+
+});
+
+
+
+// FEHLER ANLEGEN
+
+createBtn.addEventListener("click", async () => {
+
+  const code = document
+    .getElementById("newCode")
+    .value;
+
+  const title = document
+    .getElementById("newTitle")
+    .value;
+
+  const solution = document
+    .getElementById("newSolution")
+    .value;
+
+  if(
+    code === "" ||
+    title === "" ||
+    solution === ""
+  ) {
+    alert("Bitte alle Felder ausfüllen");
+    return;
+  }
+
+  await addDoc(collection(db, "fehler"), {
+
+    code: code,
+    title: title,
+    solution: solution,
+    createdAt: new Date()
+
+  });
+
+  alert("Fehler erfolgreich gespeichert");
 
 });
