@@ -35,8 +35,21 @@ async function initNotifications() {
 
   try {
 
+    // SERVICE WORKER
+
+    const registration =
+      await navigator.serviceWorker.register(
+        "/Maintix/firebase-messaging-sw.js"
+      );
+
+
+
+    // ERLAUBNIS
+
     const permission =
       await Notification.requestPermission();
+
+
 
     if(permission === "granted") {
 
@@ -45,7 +58,10 @@ async function initNotifications() {
         {
 
           vapidKey:
-          "BLiHkBw_lYWpKDjKDRO9WE995PMd5l_mKH77Bo3eRC8QVsMfHTHMuG-K8qwJhouPKidg0BJfqTYi1JkuG5eh_tg"
+          "BLiHkBw_lYWpKDjKDRO9WE995PMd5l_mKH77Bo3eRC8QVsMfHTHMuG-K8qwJhouPKidg0BJfqTYi1JkuG5eh_tg",
+
+          serviceWorkerRegistration:
+          registration
 
         }
       );
@@ -55,11 +71,24 @@ async function initNotifications() {
         token
       );
 
+      alert(
+        "Benachrichtigungen aktiviert"
+      );
+
+    } else {
+
+      alert(
+        "Benachrichtigungen verweigert"
+      );
     }
 
   } catch(error) {
 
     console.log(error);
+
+    alert(
+      "Push Fehler: " + error
+    );
   }
 
 }
@@ -88,7 +117,8 @@ loginBtn.addEventListener("click", () => {
 
     document.getElementById(
       "loginStatus"
-    ).innerText = "Admin erfolgreich eingeloggt";
+    ).innerText =
+      "Admin erfolgreich eingeloggt";
 
   } else {
 
@@ -110,11 +140,13 @@ showAllBtn.addEventListener("click", async () => {
     return;
   }
 
-  result.innerHTML = "Lade alle Fehler...";
+  result.innerHTML =
+    "Lade alle Fehler...";
 
-  const querySnapshot = await getDocs(
-    collection(db, "fehler")
-  );
+  const querySnapshot =
+    await getDocs(
+      collection(db, "fehler")
+    );
 
   result.innerHTML = "";
 
@@ -171,17 +203,23 @@ function activateDeleteButtons() {
 
   deleteButtons.forEach((button) => {
 
-    button.addEventListener("click", async () => {
+    button.addEventListener(
+      "click",
+      async () => {
 
-      const id = button.dataset.id;
+        const id =
+          button.dataset.id;
 
-      await deleteDoc(doc(db, "fehler", id));
+        await deleteDoc(
+          doc(db, "fehler", id)
+        );
 
-      alert("Fehler gelöscht");
+        alert("Fehler gelöscht");
 
-      button.parentElement.remove();
+        button.parentElement.remove();
 
-    });
+      }
+    );
 
   });
 
@@ -194,16 +232,19 @@ function activateDeleteButtons() {
 
 searchBtn.addEventListener("click", async () => {
 
-  const searchText = document
-    .getElementById("errorInput")
-    .value
-    .toLowerCase();
+  const searchText =
+    document
+      .getElementById("errorInput")
+      .value
+      .toLowerCase();
 
-  result.innerHTML = "Suche läuft...";
+  result.innerHTML =
+    "Suche läuft...";
 
-  const querySnapshot = await getDocs(
-    collection(db, "fehler")
-  );
+  const querySnapshot =
+    await getDocs(
+      collection(db, "fehler")
+    );
 
   result.innerHTML = "";
 
@@ -213,10 +254,17 @@ searchBtn.addEventListener("click", async () => {
 
     const data = fireDoc.data();
 
-    const code = data.code?.toLowerCase() || "";
-    const title = data.title?.toLowerCase() || "";
-    const solution = data.solution?.toLowerCase() || "";
-    const plant = data.plant?.toLowerCase() || "";
+    const code =
+      data.code?.toLowerCase() || "";
+
+    const title =
+      data.title?.toLowerCase() || "";
+
+    const solution =
+      data.solution?.toLowerCase() || "";
+
+    const plant =
+      data.plant?.toLowerCase() || "";
 
 
 
@@ -265,7 +313,9 @@ searchBtn.addEventListener("click", async () => {
 
       <div class="result-card">
 
-        <h2>Keine Treffer gefunden</h2>
+        <h2>
+          Keine Treffer gefunden
+        </h2>
 
       </div>
 
@@ -281,21 +331,25 @@ searchBtn.addEventListener("click", async () => {
 
 createBtn.addEventListener("click", async () => {
 
-  const plant = document
-    .getElementById("newPlant")
-    .value;
+  const plant =
+    document
+      .getElementById("newPlant")
+      .value;
 
-  const code = document
-    .getElementById("newCode")
-    .value;
+  const code =
+    document
+      .getElementById("newCode")
+      .value;
 
-  const title = document
-    .getElementById("newTitle")
-    .value;
+  const title =
+    document
+      .getElementById("newTitle")
+      .value;
 
-  const solution = document
-    .getElementById("newSolution")
-    .value;
+  const solution =
+    document
+      .getElementById("newSolution")
+      .value;
 
 
 
@@ -306,23 +360,29 @@ createBtn.addEventListener("click", async () => {
     solution === ""
   ) {
 
-    alert("Bitte alle Felder ausfüllen");
+    alert(
+      "Bitte alle Felder ausfüllen"
+    );
+
     return;
   }
 
-  await addDoc(collection(db, "fehler"), {
+  await addDoc(
+    collection(db, "fehler"),
+    {
 
-    plant: plant,
-    code: code,
-    title: title,
-    solution: solution,
-    createdAt: new Date()
+      plant: plant,
+      code: code,
+      title: title,
+      solution: solution,
+      createdAt: new Date()
 
-  });
+    }
+  );
 
 
 
-  // PUSH TEST
+  // TEST NOTIFICATION
 
   new Notification(
     "Neuer Fehler erstellt",
@@ -336,7 +396,9 @@ createBtn.addEventListener("click", async () => {
 
 
 
-  alert("Fehler erfolgreich gespeichert");
+  alert(
+    "Fehler erfolgreich gespeichert"
+  );
 
 });
 
@@ -350,71 +412,81 @@ const plantButtons =
 
 plantButtons.forEach((button) => {
 
-  button.addEventListener("click", async () => {
+  button.addEventListener(
+    "click",
+    async () => {
 
-    const selectedPlant =
-      button.innerText;
+      const selectedPlant =
+        button.innerText;
 
-    result.innerHTML =
-      "Lade Fehler...";
+      result.innerHTML =
+        "Lade Fehler...";
 
-    const querySnapshot = await getDocs(
-      collection(db, "fehler")
-    );
+      const querySnapshot =
+        await getDocs(
+          collection(db, "fehler")
+        );
 
-    result.innerHTML = "";
+      result.innerHTML = "";
 
-    let found = false;
+      let found = false;
 
-    querySnapshot.forEach((fireDoc) => {
+      querySnapshot.forEach((fireDoc) => {
 
-      const data = fireDoc.data();
+        const data =
+          fireDoc.data();
 
-      if(data.plant === selectedPlant) {
+        if(
+          data.plant ===
+          selectedPlant
+        ) {
 
-        found = true;
+          found = true;
 
-        result.innerHTML += `
+          result.innerHTML += `
+
+            <div class="result-card">
+
+              <h2>${data.code}</h2>
+
+              <p>
+                <strong>Anlage:</strong>
+                ${data.plant}
+              </p>
+
+              <p>
+                <strong>Fehler:</strong>
+                ${data.title}
+              </p>
+
+              <p>
+                <strong>Lösung:</strong>
+                ${data.solution}
+              </p>
+
+            </div>
+
+          `;
+        }
+
+      });
+
+      if(!found) {
+
+        result.innerHTML = `
 
           <div class="result-card">
 
-            <h2>${data.code}</h2>
-
-            <p>
-              <strong>Anlage:</strong>
-              ${data.plant}
-            </p>
-
-            <p>
-              <strong>Fehler:</strong>
-              ${data.title}
-            </p>
-
-            <p>
-              <strong>Lösung:</strong>
-              ${data.solution}
-            </p>
+            <h2>
+              Keine Fehler gefunden
+            </h2>
 
           </div>
 
         `;
       }
 
-    });
-
-    if(!found) {
-
-      result.innerHTML = `
-
-        <div class="result-card">
-
-          <h2>Keine Fehler gefunden</h2>
-
-        </div>
-
-      `;
     }
-
-  });
+  );
 
 });
