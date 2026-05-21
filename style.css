@@ -1,149 +1,53 @@
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  color: white;
+.live-popup {
 
-  background:
-    linear-gradient(
-      rgba(15, 23, 42, 0.88),
-      rgba(15, 23, 42, 0.92)
-    ),
+  position: fixed;
 
-    url("https://images.unsplash.com/photo-1565043589221-1a6fd9ae45c7?q=80&w=2070&auto=format&fit=crop");
+  top: 20px;
 
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
+  right: 20px;
 
-  min-height: 100vh;
-}
-
-.container {
-  max-width: 1100px;
-  margin: 60px auto;
-  padding: 20px;
-}
-
-h1 {
-  font-size: 64px;
-  margin-bottom: 10px;
-  color: #60a5fa;
-}
-
-.subtitle {
-  color: #cbd5e1;
-  margin-bottom: 40px;
-  font-size: 18px;
-}
-
-.card {
-
-  background: rgba(30, 41, 59, 0.88);
-
-  backdrop-filter: blur(10px);
-
-  padding: 25px;
-
-  border-radius: 16px;
-
-  margin-bottom: 25px;
-
-  border: 1px solid rgba(255,255,255,0.08);
-}
-
-h2 {
-  margin-top: 0;
-  color: #93c5fd;
-}
-
-input,
-textarea,
-select {
-
-  width: 100%;
-
-  padding: 15px;
-
-  margin-bottom: 15px;
-
-  border: none;
-
-  border-radius: 10px;
-
-  font-size: 16px;
-
-  box-sizing: border-box;
-
-  background: rgba(15, 23, 42, 0.95);
-
-  color: white;
-}
-
-textarea {
-  min-height: 120px;
-  resize: vertical;
-}
-
-button {
-
-  width: 100%;
-
-  padding: 15px;
-
-  border: none;
-
-  border-radius: 10px;
-
-  background: linear-gradient(
-    135deg,
-    #2563eb,
-    #0ea5e9
-  );
+  background: #ef4444;
 
   color: white;
 
-  font-size: 16px;
-
-  font-weight: bold;
-
-  cursor: pointer;
-
-  margin-bottom: 10px;
-}
-
-button:hover {
-  opacity: 0.9;
-}
-
-.plant-grid {
-
-  display: grid;
-
-  grid-template-columns:
-    repeat(auto-fit, minmax(150px, 1fr));
-
-  gap: 15px;
-}
-
-.result-card {
-
-  background: rgba(51, 65, 85, 0.92);
-
-  padding: 20px;
+  padding: 16px 24px;
 
   border-radius: 12px;
 
-  margin-top: 15px;
+  font-size: 18px;
 
-  border-left: 5px solid #0ea5e9;
+  font-weight: bold;
+
+  z-index: 9999;
+
+  box-shadow:
+    0 0 20px rgba(0,0,0,0.4);
+
+  animation:
+    popupFade 0.3s ease;
+
 }
 
-.delete-btn {
 
-  background: #dc2626;
-  margin-top: 10px;
-}
 
-#loginStatus {
-  color: #60a5fa;
+@keyframes popupFade {
+
+  from {
+
+    opacity: 0;
+
+    transform:
+      translateY(-20px);
+
+  }
+
+  to {
+
+    opacity: 1;
+
+    transform:
+      translateY(0);
+
+  }
+
 }
