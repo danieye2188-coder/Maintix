@@ -9,7 +9,14 @@ import {
   doc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+import {
+  getMessaging,
+  getToken
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js";
+
 const db = getFirestore(app);
+
+const messaging = getMessaging(app);
 
 const result = document.getElementById("result");
 
@@ -19,6 +26,46 @@ const loginBtn = document.getElementById("loginBtn");
 const showAllBtn = document.getElementById("showAllBtn");
 
 let isAdmin = false;
+
+
+
+// PUSH NOTIFICATIONS
+
+async function initNotifications() {
+
+  try {
+
+    const permission =
+      await Notification.requestPermission();
+
+    if(permission === "granted") {
+
+      const token = await getToken(
+        messaging,
+        {
+
+          vapidKey:
+          "BLiHkBw_lYWpKDjKDRO9WE995PMd5l_mKH77Bo3eRC8QVsMfHTHMuG-K8qwJhouPKidg0BJfqTYi1JkuG5eh_tg"
+
+        }
+      );
+
+      console.log(
+        "Push Token:",
+        token
+      );
+
+    }
+
+  } catch(error) {
+
+    console.log(error);
+  }
+
+}
+
+initNotifications();
+
 
 
 
@@ -272,6 +319,22 @@ createBtn.addEventListener("click", async () => {
     createdAt: new Date()
 
   });
+
+
+
+  // PUSH TEST
+
+  new Notification(
+    "Neuer Fehler erstellt",
+    {
+
+      body:
+      `${plant} - ${code}`
+
+    }
+  );
+
+
 
   alert("Fehler erfolgreich gespeichert");
 
