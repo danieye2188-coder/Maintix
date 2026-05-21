@@ -11,8 +11,10 @@ const db = getFirestore(app);
 
 const searchBtn = document.getElementById("searchBtn");
 const createBtn = document.getElementById("createBtn");
+const loadBtn = document.getElementById("loadBtn");
 
 const result = document.getElementById("result");
+const errorList = document.getElementById("errorList");
 
 
 
@@ -20,12 +22,14 @@ const result = document.getElementById("result");
 
 searchBtn.addEventListener("click", async () => {
 
-  const errorCode = document
+  const searchText = document
     .getElementById("errorInput")
-    .value;
+    .value
+    .toLowerCase();
 
-  if(errorCode === "") {
-    alert("Bitte Fehlercode eingeben");
+  if(searchText === "") {
+
+    alert("Bitte Suchbegriff eingeben");
     return;
   }
 
@@ -37,16 +41,32 @@ searchBtn.addEventListener("click", async () => {
 
   let found = false;
 
+  result.innerHTML = "";
+
   querySnapshot.forEach((doc) => {
 
     const data = doc.data();
 
-    if(data.code === errorCode) {
+    const code = data.code?.toLowerCase() || "";
+    const title = data.title?.toLowerCase() || "";
+    const solution = data.solution?.toLowerCase() || "";
+
+
+
+    // SUCHLOGIK
+
+    if(
+      code.includes(searchText) ||
+      title.includes(searchText) ||
+      solution.includes(searchText)
+    ) {
 
       found = true;
 
-      result.innerHTML = `
+      result.innerHTML += `
+
         <div class="result-card">
+
           <h2>${data.code}</h2>
 
           <p>
@@ -58,17 +78,24 @@ searchBtn.addEventListener("click", async () => {
             <strong>Lösung:</strong>
             ${data.solution}
           </p>
+
         </div>
+
       `;
     }
+
   });
 
   if(!found) {
 
     result.innerHTML = `
+
       <div class="result-card">
-        <h2>Fehler nicht gefunden</h2>
+
+        <h2>Keine Treffer gefunden</h2>
+
       </div>
+
     `;
   }
 
@@ -97,6 +124,7 @@ createBtn.addEventListener("click", async () => {
     title === "" ||
     solution === ""
   ) {
+
     alert("Bitte alle Felder ausfüllen");
     return;
   }
@@ -111,5 +139,46 @@ createBtn.addEventListener("click", async () => {
   });
 
   alert("Fehler erfolgreich gespeichert");
+
+});
+
+
+
+// ALLE FEHLER LADEN
+
+loadBtn.addEventListener("click", async () => {
+
+  errorList.innerHTML = "Lade Fehler...";
+
+  const querySnapshot = await getDocs(
+    collection(db, "fehler")
+  );
+
+  errorList.innerHTML = "";
+
+  querySnapshot.forEach((doc) => {
+
+    const data = doc.data();
+
+    errorList.innerHTML += `
+
+      <div class="error-item">
+
+        <h3>${data.code}</h3>
+
+        <p>
+          <strong>Fehler:</strong>
+          ${data.title}
+        </p>
+
+        <p>
+          <strong>Lösung:</strong>
+          ${data.solution}
+        </p>
+
+      </div>
+
+    `;
+  });
 
 });
