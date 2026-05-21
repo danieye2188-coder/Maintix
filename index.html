@@ -2,27 +2,41 @@
 <html lang="de">
 
 <head>
+
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-  <title>Maintix</title>
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
 
-  <link rel="stylesheet" href="style.css">
+  <title>IntelliBase</title>
+
+  <link
+    rel="manifest"
+    href="manifest.json"
+  />
+
+  <link
+    rel="stylesheet"
+    href="style.css"
+  />
+
 </head>
 
 <body>
 
   <div class="container">
 
-    <h1>Maintix</h1>
+    <h1>IntelliBase</h1>
 
     <p class="subtitle">
-      Fehlerdatenbank für Laserschweißanlagen
+      Smart Factory Knowledge System
     </p>
 
 
 
-    <!-- ADMIN LOGIN -->
+    <!-- ADMIN -->
 
     <div class="card">
 
@@ -54,7 +68,7 @@
 
 
 
-    <!-- FEHLERSUCHE -->
+    <!-- SUCHE -->
 
     <div class="card">
 
@@ -80,10 +94,6 @@
 
       <h2>Neuen Fehler anlegen</h2>
 
-
-
-      <!-- ANLAGEN AUSWAHL -->
-
       <select id="newPlant">
 
         <option value="">
@@ -103,8 +113,6 @@
         <option>Linie 7</option>
 
       </select>
-
-
 
       <input
         type="text"
@@ -131,7 +139,7 @@
 
 
 
-    <!-- ANLAGEN BUTTONS -->
+    <!-- ANLAGEN -->
 
     <div class="card">
 
@@ -163,8 +171,15 @@
 
   </div>
 
-  <script type="module" src="firebase.js"></script>
-  <script type="module" src="app.js"></script>
+  <script
+    type="module"
+    src="firebase.js"
+  ></script>
+
+  <script
+    type="module"
+    src="app.js"
+  ></script>
 
 </body>
 </html>
