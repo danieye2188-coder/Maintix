@@ -29,7 +29,9 @@ body {
 
   background-position: center;
 
-  background-attachment: fixed;
+  background-repeat: no-repeat;
+
+  background-attachment: scroll;
 
   color: white;
 
@@ -321,6 +323,16 @@ button:hover {
 
 @media(max-width: 768px) {
 
+  body {
+
+    padding: 15px;
+
+    background-position: center center;
+
+  }
+
+
+
   h1 {
 
     font-size: 42px;
@@ -329,9 +341,38 @@ button:hover {
 
 
 
+  .subtitle {
+
+    font-size: 16px;
+
+  }
+
+
+
   .card {
 
     padding: 18px;
+
+  }
+
+
+
+  button {
+
+    width: 100%;
+
+    margin-right: 0;
+
+  }
+
+
+
+  .plant-grid {
+
+    display: grid;
+
+    grid-template-columns:
+      repeat(2, 1fr);
 
   }
 
