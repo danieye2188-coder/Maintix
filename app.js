@@ -6,17 +6,11 @@ import {
   addDoc,
   getDocs,
   deleteDoc,
-  doc
+  doc,
+  onSnapshot
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-import {
-  getMessaging,
-  getToken
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js";
-
 const db = getFirestore(app);
-
-const messaging = getMessaging(app);
 
 const result =
   document.getElementById("result");
@@ -35,66 +29,97 @@ const showAllBtn =
 
 let isAdmin = false;
 
-
-
-// SERVICE WORKER
-
-if("serviceWorker" in navigator) {
-
-  navigator.serviceWorker.register(
-    "./firebase-messaging-sw.js"
-  );
-
-}
+let knownErrors = [];
 
 
 
-// PUSH NOTIFICATIONS
 
-async function initNotifications() {
+// LIVE SYSTEM
 
-  try {
+onSnapshot(
+  collection(db, "fehler"),
+  (snapshot) => {
 
-    const registration =
-      await navigator.serviceWorker.register(
-        "./firebase-messaging-sw.js"
-      );
+    const currentErrors = [];
 
+    snapshot.forEach((doc) => {
 
+      currentErrors.push(doc.id);
 
-    const permission =
-      await Notification.requestPermission();
-
+    });
 
 
-    if(permission === "granted") {
 
-      const token = await getToken(
-        messaging,
-        {
+    // NEUER FEHLER
 
-          vapidKey:
-          "BLiHkBw_lYWpKDjKDRO9WE995PMd5l_mKH77Bo3eRC8QVsMfHTHMuG-K8qwJhouPKidg0BJfqTYi1JkuG5eh_tg",
+    if(
+      knownErrors.length > 0 &&
+      currentErrors.length >
+      knownErrors.length
+    ) {
 
-          serviceWorkerRegistration:
-          registration
-
-        }
-      );
-
-      console.log(token);
+      showLiveNotification();
 
     }
 
-  } catch(error) {
 
-    console.log(error);
+
+    knownErrors = currentErrors;
+
+  }
+);
+
+
+
+
+// LIVE POPUP
+
+function showLiveNotification() {
+
+  const popup =
+    document.createElement("div");
+
+  popup.className =
+    "live-popup";
+
+  popup.innerHTML = `
+
+    🔴 Neuer Fehler erstellt
+
+  `;
+
+  document.body.appendChild(popup);
+
+
+
+  // SOUND
+
+  const audio =
+    new Audio(
+      "https://actions.google.com/sounds/v1/alarms/beep_short.ogg"
+    );
+
+  audio.play();
+
+
+
+  // VIBRATION HANDY
+
+  if(navigator.vibrate) {
+
+    navigator.vibrate(300);
 
   }
 
-}
 
-initNotifications();
+
+  setTimeout(() => {
+
+    popup.remove();
+
+  }, 4000);
+
+}
 
 
 
@@ -177,7 +202,7 @@ function createCard(data, id="") {
 
 
 
-// DELETE BUTTONS
+// DELETE
 
 function activateDeleteButtons() {
 
@@ -267,7 +292,7 @@ async function loadAllErrors() {
 
 
 
-// FEHLER SUCHEN
+// SUCHE
 
 searchBtn.addEventListener(
   "click",
@@ -425,25 +450,11 @@ createBtn.addEventListener(
 
 
 
-      new Notification(
-        "Neuer Fehler erstellt",
-        {
-
-          body:
-          `${plant} - ${code}`
-
-        }
-      );
-
-
-
       alert(
         "Fehler erfolgreich gespeichert"
       );
 
 
-
-      // FELDER LEEREN
 
       document
         .getElementById("newPlant")
