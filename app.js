@@ -37,7 +37,7 @@ let isAdmin = false;
 
 
 
-// SERVICE WORKER REGISTRIEREN
+// SERVICE WORKER
 
 if("serviceWorker" in navigator) {
 
@@ -82,14 +82,7 @@ async function initNotifications() {
         }
       );
 
-      console.log(
-        "Push Token:",
-        token
-      );
-
-      alert(
-        "Benachrichtigungen aktiviert"
-      );
+      console.log(token);
 
     }
 
@@ -140,59 +133,6 @@ loginBtn.addEventListener("click", () => {
 
 
 
-// ALLE FEHLER ANZEIGEN
-
-showAllBtn.addEventListener(
-  "click",
-  async () => {
-
-    if(!isAdmin) {
-
-      alert("Nur für Admins");
-      return;
-    }
-
-    loadAllErrors();
-
-  }
-);
-
-
-
-
-// FEHLER LADEN
-
-async function loadAllErrors() {
-
-  result.innerHTML =
-    "Lade Fehler...";
-
-  const querySnapshot =
-    await getDocs(
-      collection(db, "fehler")
-    );
-
-  result.innerHTML = "";
-
-  querySnapshot.forEach((fireDoc) => {
-
-    const data =
-      fireDoc.data();
-
-    result.innerHTML += createCard(
-      data,
-      fireDoc.id
-    );
-
-  });
-
-  activateDeleteButtons();
-
-}
-
-
-
-
 // FEHLER KARTE
 
 function createCard(data, id="") {
@@ -237,7 +177,7 @@ function createCard(data, id="") {
 
 
 
-// FEHLER LÖSCHEN
+// DELETE BUTTONS
 
 function activateDeleteButtons() {
 
@@ -267,6 +207,60 @@ function activateDeleteButtons() {
     );
 
   });
+
+}
+
+
+
+
+// ALLE FEHLER
+
+showAllBtn.addEventListener(
+  "click",
+  async () => {
+
+    if(!isAdmin) {
+
+      alert("Nur für Admins");
+      return;
+    }
+
+    loadAllErrors();
+
+  }
+);
+
+
+
+
+// FEHLER LADEN
+
+async function loadAllErrors() {
+
+  result.innerHTML =
+    "Lade Fehler...";
+
+  const querySnapshot =
+    await getDocs(
+      collection(db, "fehler")
+    );
+
+  result.innerHTML = "";
+
+  querySnapshot.forEach((fireDoc) => {
+
+    const data =
+      fireDoc.data();
+
+    result.innerHTML +=
+      createCard(
+        data,
+        fireDoc.id
+      );
+
+  });
+
+  activateDeleteButtons();
 
 }
 
@@ -365,72 +359,126 @@ createBtn.addEventListener(
   "click",
   async () => {
 
-    const plant =
-      document
-        .getElementById("newPlant")
-        .value;
+    try {
 
-    const code =
-      document
-        .getElementById("newCode")
-        .value;
+      const plant =
+        document
+          .getElementById("newPlant")
+          .value
+          .trim();
 
-    const title =
-      document
-        .getElementById("newTitle")
-        .value;
+      const code =
+        document
+          .getElementById("newCode")
+          .value
+          .trim();
 
-    const solution =
-      document
-        .getElementById("newSolution")
-        .value;
+      const title =
+        document
+          .getElementById("newTitle")
+          .value
+          .trim();
+
+      const solution =
+        document
+          .getElementById("newSolution")
+          .value
+          .trim();
 
 
 
-    if(
-      plant === "" ||
-      code === "" ||
-      title === "" ||
-      solution === ""
-    ) {
+      if(
+        plant === "" ||
+        code === "" ||
+        title === "" ||
+        solution === ""
+      ) {
 
-      alert(
-        "Bitte alle Felder ausfüllen"
+        alert(
+          "Bitte alle Felder ausfüllen"
+        );
+
+        return;
+      }
+
+
+
+      createBtn.disabled = true;
+
+      createBtn.innerText =
+        "Speichert...";
+
+
+
+      await addDoc(
+        collection(db, "fehler"),
+        {
+
+          plant: plant,
+          code: code,
+          title: title,
+          solution: solution,
+          createdAt: new Date()
+
+        }
       );
 
-      return;
+
+
+      new Notification(
+        "Neuer Fehler erstellt",
+        {
+
+          body:
+          `${plant} - ${code}`
+
+        }
+      );
+
+
+
+      alert(
+        "Fehler erfolgreich gespeichert"
+      );
+
+
+
+      // FELDER LEEREN
+
+      document
+        .getElementById("newPlant")
+        .value = "";
+
+      document
+        .getElementById("newCode")
+        .value = "";
+
+      document
+        .getElementById("newTitle")
+        .value = "";
+
+      document
+        .getElementById("newSolution")
+        .value = "";
+
+
+
+    } catch(error) {
+
+      console.log(error);
+
+      alert(
+        "Fehler: " + error
+      );
+
     }
 
-    await addDoc(
-      collection(db, "fehler"),
-      {
-
-        plant: plant,
-        code: code,
-        title: title,
-        solution: solution,
-        createdAt: new Date()
-
-      }
-    );
 
 
+    createBtn.disabled = false;
 
-    new Notification(
-      "Neuer Fehler erstellt",
-      {
-
-        body:
-        `${plant} - ${code}`
-
-      }
-    );
-
-
-
-    alert(
-      "Fehler erfolgreich gespeichert"
-    );
+    createBtn.innerText =
+      "Fehler anlegen";
 
   }
 );
