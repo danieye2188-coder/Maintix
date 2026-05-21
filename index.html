@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="de">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -19,10 +20,14 @@
       Fehlerdatenbank für Anlagen
     </p>
 
+    <!-- Suche -->
+
     <div class="card">
 
-      <input 
-        type="text" 
+      <h2>Fehler suchen</h2>
+
+      <input
+        type="text"
         id="errorInput"
         placeholder="Fehlercode eingeben..."
       >
@@ -32,6 +37,37 @@
       </button>
 
     </div>
+
+    <!-- Neuer Fehler -->
+
+    <div class="card">
+
+      <h2>Neuen Fehler anlegen</h2>
+
+      <input
+        type="text"
+        id="newCode"
+        placeholder="Fehlercode"
+      >
+
+      <input
+        type="text"
+        id="newTitle"
+        placeholder="Fehlertitel"
+      >
+
+      <textarea
+        id="newSolution"
+        placeholder="Lösung"
+      ></textarea>
+
+      <button id="createBtn">
+        Fehler anlegen
+      </button>
+
+    </div>
+
+    <!-- Ergebnis -->
 
     <div id="result"></div>
 
