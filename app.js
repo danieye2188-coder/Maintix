@@ -18,24 +18,42 @@ const db = getFirestore(app);
 
 const messaging = getMessaging(app);
 
-const result = document.getElementById("result");
+const result =
+  document.getElementById("result");
 
-const searchBtn = document.getElementById("searchBtn");
-const createBtn = document.getElementById("createBtn");
-const loginBtn = document.getElementById("loginBtn");
-const showAllBtn = document.getElementById("showAllBtn");
+const searchBtn =
+  document.getElementById("searchBtn");
+
+const createBtn =
+  document.getElementById("createBtn");
+
+const loginBtn =
+  document.getElementById("loginBtn");
+
+const showAllBtn =
+  document.getElementById("showAllBtn");
 
 let isAdmin = false;
 
 
 
-// PUSH NOTIFICATIONS
+// SERVICE WORKER
+
+if("serviceWorker" in navigator) {
+
+  navigator.serviceWorker.register(
+    "/Maintix/firebase-messaging-sw.js"
+  );
+
+}
+
+
+
+// PUSH
 
 async function initNotifications() {
 
   try {
-
-    // SERVICE WORKER
 
     const registration =
       await navigator.serviceWorker.register(
@@ -43,8 +61,6 @@ async function initNotifications() {
       );
 
 
-
-    // ERLAUBNIS
 
     const permission =
       await Notification.requestPermission();
@@ -66,29 +82,18 @@ async function initNotifications() {
         }
       );
 
-      console.log(
-        "Push Token:",
-        token
-      );
+      console.log(token);
 
       alert(
         "Benachrichtigungen aktiviert"
       );
 
-    } else {
-
-      alert(
-        "Benachrichtigungen verweigert"
-      );
     }
 
   } catch(error) {
 
     console.log(error);
 
-    alert(
-      "Push Fehler: " + error
-    );
   }
 
 }
@@ -122,7 +127,9 @@ loginBtn.addEventListener("click", () => {
 
   } else {
 
-    alert("Falsche Login Daten");
+    alert(
+      "Falsche Login Daten"
+    );
   }
 
 });
@@ -130,18 +137,32 @@ loginBtn.addEventListener("click", () => {
 
 
 
-// ALLE FEHLER ANZEIGEN
+// ALLE FEHLER
 
-showAllBtn.addEventListener("click", async () => {
+showAllBtn.addEventListener(
+  "click",
+  async () => {
 
-  if(!isAdmin) {
+    if(!isAdmin) {
 
-    alert("Nur für Admins");
-    return;
+      alert("Nur für Admins");
+      return;
+    }
+
+    loadAllErrors();
+
   }
+);
+
+
+
+
+// FEHLER LADEN
+
+async function loadAllErrors() {
 
   result.innerHTML =
-    "Lade alle Fehler...";
+    "Lade Fehler...";
 
   const querySnapshot =
     await getDocs(
@@ -152,49 +173,68 @@ showAllBtn.addEventListener("click", async () => {
 
   querySnapshot.forEach((fireDoc) => {
 
-    const data = fireDoc.data();
+    const data =
+      fireDoc.data();
 
-    result.innerHTML += `
+    result.innerHTML += createCard(
+      data,
+      fireDoc.id
+    );
 
-      <div class="result-card">
-
-        <h2>${data.code}</h2>
-
-        <p>
-          <strong>Anlage:</strong>
-          ${data.plant}
-        </p>
-
-        <p>
-          <strong>Fehler:</strong>
-          ${data.title}
-        </p>
-
-        <p>
-          <strong>Lösung:</strong>
-          ${data.solution}
-        </p>
-
-        <button
-          class="delete-btn"
-          data-id="${fireDoc.id}"
-        >
-          Fehler löschen
-        </button>
-
-      </div>
-
-    `;
   });
 
   activateDeleteButtons();
 
-});
+}
 
 
 
 
-// DELETE BUTTONS
+// HTML CARD
+
+function createCard(data, id="") {
+
+  return `
+
+    <div class="result-card">
+
+      <h2>${data.code}</h2>
+
+      <p>
+        <strong>Anlage:</strong>
+        ${data.plant}
+      </p>
+
+      <p>
+        <strong>Fehler:</strong>
+        ${data.title}
+      </p>
+
+      <p>
+        <strong>Lösung:</strong>
+        ${data.solution}
+      </p>
+
+      ${isAdmin ? `
+
+      <button
+        class="delete-btn"
+        data-id="${id}"
+      >
+        Fehler löschen
+      </button>
+
+      ` : ""}
+
+    </div>
+
+  `;
+}
+
+
+
+
+// DELETE
 
 function activateDeleteButtons() {
 
@@ -214,9 +254,11 @@ function activateDeleteButtons() {
           doc(db, "fehler", id)
         );
 
-        alert("Fehler gelöscht");
+        alert(
+          "Fehler gelöscht"
+        );
 
-        button.parentElement.remove();
+        loadAllErrors();
 
       }
     );
@@ -228,179 +270,167 @@ function activateDeleteButtons() {
 
 
 
-// FEHLER SUCHEN
+// SUCHE
 
-searchBtn.addEventListener("click", async () => {
+searchBtn.addEventListener(
+  "click",
+  async () => {
 
-  const searchText =
-    document
-      .getElementById("errorInput")
-      .value
-      .toLowerCase();
+    const searchText =
+      document
+        .getElementById("errorInput")
+        .value
+        .toLowerCase();
 
-  result.innerHTML =
-    "Suche läuft...";
+    result.innerHTML =
+      "Suche läuft...";
 
-  const querySnapshot =
-    await getDocs(
-      collection(db, "fehler")
-    );
+    const querySnapshot =
+      await getDocs(
+        collection(db, "fehler")
+      );
 
-  result.innerHTML = "";
+    result.innerHTML = "";
 
-  let found = false;
+    let found = false;
 
-  querySnapshot.forEach((fireDoc) => {
+    querySnapshot.forEach((fireDoc) => {
 
-    const data = fireDoc.data();
+      const data =
+        fireDoc.data();
 
-    const code =
-      data.code?.toLowerCase() || "";
+      const code =
+        data.code?.toLowerCase() || "";
 
-    const title =
-      data.title?.toLowerCase() || "";
+      const title =
+        data.title?.toLowerCase() || "";
 
-    const solution =
-      data.solution?.toLowerCase() || "";
+      const solution =
+        data.solution?.toLowerCase() || "";
 
-    const plant =
-      data.plant?.toLowerCase() || "";
+      const plant =
+        data.plant?.toLowerCase() || "";
 
 
 
-    if(
+      if(
 
-      code.includes(searchText) ||
-      title.includes(searchText) ||
-      solution.includes(searchText) ||
-      plant.includes(searchText)
+        code.includes(searchText) ||
+        title.includes(searchText) ||
+        solution.includes(searchText) ||
+        plant.includes(searchText)
 
-    ) {
+      ) {
 
-      found = true;
+        found = true;
 
-      result.innerHTML += `
+        result.innerHTML +=
+          createCard(
+            data,
+            fireDoc.id
+          );
+      }
+
+    });
+
+    if(!found) {
+
+      result.innerHTML = `
 
         <div class="result-card">
 
-          <h2>${data.code}</h2>
-
-          <p>
-            <strong>Anlage:</strong>
-            ${data.plant}
-          </p>
-
-          <p>
-            <strong>Fehler:</strong>
-            ${data.title}
-          </p>
-
-          <p>
-            <strong>Lösung:</strong>
-            ${data.solution}
-          </p>
+          <h2>
+            Keine Treffer gefunden
+          </h2>
 
         </div>
 
       `;
     }
 
-  });
+    activateDeleteButtons();
 
-  if(!found) {
-
-    result.innerHTML = `
-
-      <div class="result-card">
-
-        <h2>
-          Keine Treffer gefunden
-        </h2>
-
-      </div>
-
-    `;
   }
-
-});
+);
 
 
 
 
 // FEHLER ANLEGEN
 
-createBtn.addEventListener("click", async () => {
+createBtn.addEventListener(
+  "click",
+  async () => {
 
-  const plant =
-    document
-      .getElementById("newPlant")
-      .value;
+    const plant =
+      document
+        .getElementById("newPlant")
+        .value;
 
-  const code =
-    document
-      .getElementById("newCode")
-      .value;
+    const code =
+      document
+        .getElementById("newCode")
+        .value;
 
-  const title =
-    document
-      .getElementById("newTitle")
-      .value;
+    const title =
+      document
+        .getElementById("newTitle")
+        .value;
 
-  const solution =
-    document
-      .getElementById("newSolution")
-      .value;
+    const solution =
+      document
+        .getElementById("newSolution")
+        .value;
 
 
 
-  if(
-    plant === "" ||
-    code === "" ||
-    title === "" ||
-    solution === ""
-  ) {
+    if(
+      plant === "" ||
+      code === "" ||
+      title === "" ||
+      solution === ""
+    ) {
 
-    alert(
-      "Bitte alle Felder ausfüllen"
+      alert(
+        "Bitte alle Felder ausfüllen"
+      );
+
+      return;
+    }
+
+    await addDoc(
+      collection(db, "fehler"),
+      {
+
+        plant: plant,
+        code: code,
+        title: title,
+        solution: solution,
+        createdAt: new Date()
+
+      }
     );
 
-    return;
+
+
+    new Notification(
+      "Neuer Fehler erstellt",
+      {
+
+        body:
+        `${plant} - ${code}`
+
+      }
+    );
+
+
+
+    alert(
+      "Fehler erfolgreich gespeichert"
+    );
+
   }
-
-  await addDoc(
-    collection(db, "fehler"),
-    {
-
-      plant: plant,
-      code: code,
-      title: title,
-      solution: solution,
-      createdAt: new Date()
-
-    }
-  );
-
-
-
-  // TEST NOTIFICATION
-
-  new Notification(
-    "Neuer Fehler erstellt",
-    {
-
-      body:
-      `${plant} - ${code}`
-
-    }
-  );
-
-
-
-  alert(
-    "Fehler erfolgreich gespeichert"
-  );
-
-});
+);
 
 
 
@@ -443,30 +473,11 @@ plantButtons.forEach((button) => {
 
           found = true;
 
-          result.innerHTML += `
-
-            <div class="result-card">
-
-              <h2>${data.code}</h2>
-
-              <p>
-                <strong>Anlage:</strong>
-                ${data.plant}
-              </p>
-
-              <p>
-                <strong>Fehler:</strong>
-                ${data.title}
-              </p>
-
-              <p>
-                <strong>Lösung:</strong>
-                ${data.solution}
-              </p>
-
-            </div>
-
-          `;
+          result.innerHTML +=
+            createCard(
+              data,
+              fireDoc.id
+            );
         }
 
       });
@@ -485,6 +496,8 @@ plantButtons.forEach((button) => {
 
         `;
       }
+
+      activateDeleteButtons();
 
     }
   );
