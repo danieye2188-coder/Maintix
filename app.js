@@ -13,7 +13,6 @@ const result = document.getElementById("result");
 
 const searchBtn = document.getElementById("searchBtn");
 const createBtn = document.getElementById("createBtn");
-const loadPlantBtn = document.getElementById("loadPlantBtn");
 
 
 
@@ -126,6 +125,7 @@ createBtn.addEventListener("click", async () => {
 
 
   if(
+    plant === "" ||
     code === "" ||
     title === "" ||
     solution === ""
@@ -152,52 +152,72 @@ createBtn.addEventListener("click", async () => {
 
 
 
-// FEHLER NACH ANLAGE
+// ANLAGEN BUTTONS
 
-loadPlantBtn.addEventListener("click", async () => {
+const plantButtons =
+  document.querySelectorAll(".plant-btn");
 
-  const selectedPlant = document
-    .getElementById("plantSelect")
-    .value;
+plantButtons.forEach((button) => {
 
-  result.innerHTML = "Lade Fehler...";
+  button.addEventListener("click", async () => {
 
-  const querySnapshot = await getDocs(
-    collection(db, "fehler")
-  );
+    const selectedPlant =
+      button.innerText;
 
-  result.innerHTML = "";
+    result.innerHTML =
+      "Lade Fehler...";
 
-  let found = false;
+    const querySnapshot = await getDocs(
+      collection(db, "fehler")
+    );
 
-  querySnapshot.forEach((doc) => {
+    result.innerHTML = "";
 
-    const data = doc.data();
+    let found = false;
 
-    if(data.plant === selectedPlant) {
+    querySnapshot.forEach((doc) => {
 
-      found = true;
+      const data = doc.data();
 
-      result.innerHTML += `
+      if(data.plant === selectedPlant) {
+
+        found = true;
+
+        result.innerHTML += `
+
+          <div class="result-card">
+
+            <h2>${data.code}</h2>
+
+            <p>
+              <strong>Anlage:</strong>
+              ${data.plant}
+            </p>
+
+            <p>
+              <strong>Fehler:</strong>
+              ${data.title}
+            </p>
+
+            <p>
+              <strong>Lösung:</strong>
+              ${data.solution}
+            </p>
+
+          </div>
+
+        `;
+      }
+
+    });
+
+    if(!found) {
+
+      result.innerHTML = `
 
         <div class="result-card">
 
-          <h2>${data.code}</h2>
-
-          <p>
-            <strong>Anlage:</strong>
-            ${data.plant}
-          </p>
-
-          <p>
-            <strong>Fehler:</strong>
-            ${data.title}
-          </p>
-
-          <p>
-            <strong>Lösung:</strong>
-            ${data.solution}
-          </p>
+          <h2>Keine Fehler gefunden</h2>
 
         </div>
 
@@ -205,18 +225,5 @@ loadPlantBtn.addEventListener("click", async () => {
     }
 
   });
-
-  if(!found) {
-
-    result.innerHTML = `
-
-      <div class="result-card">
-
-        <h2>Keine Fehler gefunden</h2>
-
-      </div>
-
-    `;
-  }
 
 });
