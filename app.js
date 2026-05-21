@@ -7,7 +7,10 @@ import {
   getDocs,
   deleteDoc,
   doc,
-  onSnapshot
+  onSnapshot,
+  query,
+  orderBy,
+  limit
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const db = getFirestore(app);
@@ -29,42 +32,50 @@ const showAllBtn =
 
 let isAdmin = false;
 
-let knownErrors = [];
+let latestKnownId = null;
 
 
 
+// 🔥 LIVE FEHLER LISTENER
 
-// LIVE SYSTEM
+const latestQuery = query(
+  collection(db, "fehler"),
+  orderBy("createdAt", "desc"),
+  limit(1)
+);
+
+
 
 onSnapshot(
-  collection(db, "fehler"),
+  latestQuery,
   (snapshot) => {
 
-    const currentErrors = [];
+    snapshot.forEach((fireDoc) => {
 
-    snapshot.forEach((doc) => {
+      const data = fireDoc.data();
 
-      currentErrors.push(doc.id);
+      // ERSTER START
+
+      if(latestKnownId === null) {
+
+        latestKnownId = fireDoc.id;
+        return;
+
+      }
+
+
+
+      // NEUER FEHLER
+
+      if(fireDoc.id !== latestKnownId) {
+
+        latestKnownId = fireDoc.id;
+
+        showLiveNotification(data);
+
+      }
 
     });
-
-
-
-    // NEUER FEHLER
-
-    if(
-      knownErrors.length > 0 &&
-      currentErrors.length >
-      knownErrors.length
-    ) {
-
-      showLiveNotification();
-
-    }
-
-
-
-    knownErrors = currentErrors;
 
   }
 );
@@ -72,9 +83,9 @@ onSnapshot(
 
 
 
-// LIVE POPUP
+// 🔥 LIVE POPUP
 
-function showLiveNotification() {
+function showLiveNotification(data) {
 
   const popup =
     document.createElement("div");
@@ -84,7 +95,17 @@ function showLiveNotification() {
 
   popup.innerHTML = `
 
-    🔴 Neuer Fehler erstellt
+    <h3>
+      🔴 Neuer Fehler
+    </h3>
+
+    <p>
+      ${data.plant}
+    </p>
+
+    <p>
+      ${data.code}
+    </p>
 
   `;
 
@@ -103,11 +124,11 @@ function showLiveNotification() {
 
 
 
-  // VIBRATION HANDY
+  // HANDY VIBRATION
 
   if(navigator.vibrate) {
 
-    navigator.vibrate(300);
+    navigator.vibrate([300, 100, 300]);
 
   }
 
@@ -117,7 +138,7 @@ function showLiveNotification() {
 
     popup.remove();
 
-  }, 4000);
+  }, 5000);
 
 }
 
@@ -202,7 +223,7 @@ function createCard(data, id="") {
 
 
 
-// DELETE
+// DELETE BUTTONS
 
 function activateDeleteButtons() {
 
