@@ -1,31 +1,63 @@
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background: #0f172a;
   color: white;
+
+  background:
+    linear-gradient(
+      rgba(15, 23, 42, 0.88),
+      rgba(15, 23, 42, 0.92)
+    ),
+
+    url("https://images.unsplash.com/photo-1565043589221-1a6fd9ae45c7?q=80&w=2070&auto=format&fit=crop");
+
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+
+  min-height: 100vh;
 }
 
 .container {
-  max-width: 700px;
-  margin: 80px auto;
+  max-width: 800px;
+  margin: 60px auto;
   padding: 20px;
 }
 
 h1 {
-  font-size: 48px;
+  font-size: 64px;
   margin-bottom: 10px;
+  color: #60a5fa;
+  text-shadow: 0 0 20px rgba(96, 165, 250, 0.4);
 }
 
 .subtitle {
-  color: #94a3b8;
+  color: #cbd5e1;
   margin-bottom: 40px;
+  font-size: 18px;
 }
 
 .card {
-  background: #1e293b;
-  padding: 20px;
-  border-radius: 12px;
+  background: rgba(30, 41, 59, 0.85);
+
+  backdrop-filter: blur(10px);
+
+  padding: 25px;
+
+  border-radius: 16px;
+
   margin-bottom: 25px;
+
+  border: 1px solid rgba(255,255,255,0.08);
+
+  box-shadow:
+    0 10px 30px rgba(0,0,0,0.35);
+}
+
+h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #93c5fd;
 }
 
 input,
@@ -33,10 +65,23 @@ textarea {
   width: 100%;
   padding: 15px;
   margin-bottom: 15px;
-  border: none;
-  border-radius: 8px;
+
+  border: 1px solid rgba(255,255,255,0.08);
+
+  border-radius: 10px;
+
   font-size: 16px;
+
   box-sizing: border-box;
+
+  background: rgba(15, 23, 42, 0.9);
+
+  color: white;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #94a3b8;
 }
 
 textarea {
@@ -46,17 +91,38 @@ textarea {
 
 button {
   width: 100%;
+
   padding: 15px;
+
   border: none;
-  border-radius: 8px;
-  background: #2563eb;
+
+  border-radius: 10px;
+
+  background: linear-gradient(
+    135deg,
+    #2563eb,
+    #0ea5e9
+  );
+
   color: white;
+
   font-size: 16px;
+
+  font-weight: bold;
+
   cursor: pointer;
+
+  transition: 0.25s;
+
+  margin-bottom: 10px;
 }
 
 button:hover {
-  background: #1d4ed8;
+
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 10px 25px rgba(37, 99, 235, 0.4);
 }
 
 #result {
@@ -64,7 +130,39 @@ button:hover {
 }
 
 .result-card {
-  background: #1e293b;
+  background: rgba(51, 65, 85, 0.9);
+
   padding: 20px;
+
   border-radius: 12px;
+
+  margin-top: 15px;
+
+  border-left: 5px solid #0ea5e9;
+}
+
+.error-item {
+  background: rgba(51, 65, 85, 0.9);
+
+  padding: 15px;
+
+  border-radius: 12px;
+
+  margin-top: 12px;
+
+  border-left: 4px solid #2563eb;
+
+  transition: 0.2s;
+}
+
+.error-item:hover {
+
+  transform: translateX(5px);
+
+  background: rgba(71, 85, 105, 0.95);
+}
+
+h3 {
+  margin-top: 0;
+  color: #60a5fa;
 }
