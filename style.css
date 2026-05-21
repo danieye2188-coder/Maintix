@@ -57,7 +57,8 @@ h2 {
 }
 
 input,
-textarea {
+textarea,
+select {
 
   width: 100%;
 
@@ -140,12 +141,6 @@ button:hover {
 .delete-btn {
 
   background: #dc2626;
-  margin-top: 10px;
-}
-
-.edit-btn {
-
-  background: #16a34a;
   margin-top: 10px;
 }
 
