@@ -9,12 +9,11 @@ import {
 
 const db = getFirestore(app);
 
+const result = document.getElementById("result");
+
 const searchBtn = document.getElementById("searchBtn");
 const createBtn = document.getElementById("createBtn");
-const loadBtn = document.getElementById("loadBtn");
-
-const result = document.getElementById("result");
-const errorList = document.getElementById("errorList");
+const loadPlantBtn = document.getElementById("loadPlantBtn");
 
 
 
@@ -27,21 +26,15 @@ searchBtn.addEventListener("click", async () => {
     .value
     .toLowerCase();
 
-  if(searchText === "") {
-
-    alert("Bitte Suchbegriff eingeben");
-    return;
-  }
-
   result.innerHTML = "Suche läuft...";
 
   const querySnapshot = await getDocs(
     collection(db, "fehler")
   );
 
-  let found = false;
-
   result.innerHTML = "";
+
+  let found = false;
 
   querySnapshot.forEach((doc) => {
 
@@ -50,15 +43,17 @@ searchBtn.addEventListener("click", async () => {
     const code = data.code?.toLowerCase() || "";
     const title = data.title?.toLowerCase() || "";
     const solution = data.solution?.toLowerCase() || "";
+    const plant = data.plant?.toLowerCase() || "";
 
 
-
-    // SUCHLOGIK
 
     if(
+
       code.includes(searchText) ||
       title.includes(searchText) ||
-      solution.includes(searchText)
+      solution.includes(searchText) ||
+      plant.includes(searchText)
+
     ) {
 
       found = true;
@@ -68,6 +63,11 @@ searchBtn.addEventListener("click", async () => {
         <div class="result-card">
 
           <h2>${data.code}</h2>
+
+          <p>
+            <strong>Anlage:</strong>
+            ${data.plant}
+          </p>
 
           <p>
             <strong>Fehler:</strong>
@@ -107,6 +107,10 @@ searchBtn.addEventListener("click", async () => {
 
 createBtn.addEventListener("click", async () => {
 
+  const plant = document
+    .getElementById("newPlant")
+    .value;
+
   const code = document
     .getElementById("newCode")
     .value;
@@ -118,6 +122,8 @@ createBtn.addEventListener("click", async () => {
   const solution = document
     .getElementById("newSolution")
     .value;
+
+
 
   if(
     code === "" ||
@@ -131,6 +137,7 @@ createBtn.addEventListener("click", async () => {
 
   await addDoc(collection(db, "fehler"), {
 
+    plant: plant,
     code: code,
     title: title,
     solution: solution,
@@ -144,41 +151,72 @@ createBtn.addEventListener("click", async () => {
 
 
 
-// ALLE FEHLER LADEN
 
-loadBtn.addEventListener("click", async () => {
+// FEHLER NACH ANLAGE
 
-  errorList.innerHTML = "Lade Fehler...";
+loadPlantBtn.addEventListener("click", async () => {
+
+  const selectedPlant = document
+    .getElementById("plantSelect")
+    .value;
+
+  result.innerHTML = "Lade Fehler...";
 
   const querySnapshot = await getDocs(
     collection(db, "fehler")
   );
 
-  errorList.innerHTML = "";
+  result.innerHTML = "";
+
+  let found = false;
 
   querySnapshot.forEach((doc) => {
 
     const data = doc.data();
 
-    errorList.innerHTML += `
+    if(data.plant === selectedPlant) {
 
-      <div class="error-item">
+      found = true;
 
-        <h3>${data.code}</h3>
+      result.innerHTML += `
 
-        <p>
-          <strong>Fehler:</strong>
-          ${data.title}
-        </p>
+        <div class="result-card">
 
-        <p>
-          <strong>Lösung:</strong>
-          ${data.solution}
-        </p>
+          <h2>${data.code}</h2>
+
+          <p>
+            <strong>Anlage:</strong>
+            ${data.plant}
+          </p>
+
+          <p>
+            <strong>Fehler:</strong>
+            ${data.title}
+          </p>
+
+          <p>
+            <strong>Lösung:</strong>
+            ${data.solution}
+          </p>
+
+        </div>
+
+      `;
+    }
+
+  });
+
+  if(!found) {
+
+    result.innerHTML = `
+
+      <div class="result-card">
+
+        <h2>Keine Fehler gefunden</h2>
 
       </div>
 
     `;
-  });
+  }
 
 });
