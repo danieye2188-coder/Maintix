@@ -37,19 +37,19 @@ let isAdmin = false;
 
 
 
-// SERVICE WORKER
+// SERVICE WORKER REGISTRIEREN
 
 if("serviceWorker" in navigator) {
 
   navigator.serviceWorker.register(
-    "/Maintix/firebase-messaging-sw.js"
+    "./firebase-messaging-sw.js"
   );
 
 }
 
 
 
-// PUSH
+// PUSH NOTIFICATIONS
 
 async function initNotifications() {
 
@@ -57,7 +57,7 @@ async function initNotifications() {
 
     const registration =
       await navigator.serviceWorker.register(
-        "/Maintix/firebase-messaging-sw.js"
+        "./firebase-messaging-sw.js"
       );
 
 
@@ -82,7 +82,10 @@ async function initNotifications() {
         }
       );
 
-      console.log(token);
+      console.log(
+        "Push Token:",
+        token
+      );
 
       alert(
         "Benachrichtigungen aktiviert"
@@ -137,7 +140,7 @@ loginBtn.addEventListener("click", () => {
 
 
 
-// ALLE FEHLER
+// ALLE FEHLER ANZEIGEN
 
 showAllBtn.addEventListener(
   "click",
@@ -190,7 +193,7 @@ async function loadAllErrors() {
 
 
 
-// HTML CARD
+// FEHLER KARTE
 
 function createCard(data, id="") {
 
@@ -234,7 +237,7 @@ function createCard(data, id="") {
 
 
 
-// DELETE
+// FEHLER LÖSCHEN
 
 function activateDeleteButtons() {
 
@@ -270,7 +273,7 @@ function activateDeleteButtons() {
 
 
 
-// SUCHE
+// FEHLER SUCHEN
 
 searchBtn.addEventListener(
   "click",
