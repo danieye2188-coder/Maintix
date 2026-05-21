@@ -11,6 +11,4 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 
-console.log("Firebase verbunden");
-
 export { app };
