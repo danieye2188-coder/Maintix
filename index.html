@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <title>Maintix</title>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <div class="container">
+
+    <h1>Maintix</h1>
+
+    <p class="subtitle">
+      Fehlerdatenbank für Anlagen
+    </p>
+
+    <div class="card">
+
+      <input 
+        type="text" 
+        id="errorInput"
+        placeholder="Fehlercode eingeben..."
+      >
+
+      <button id="searchBtn">
+        Fehler suchen
+      </button>
+
+    </div>
+
+    <div id="result"></div>
+
+  </div>
+
+  <script type="module" src="firebase.js"></script>
+  <script type="module" src="app.js"></script>
+
+</body>
+</html>
