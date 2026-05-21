@@ -16,6 +16,7 @@ const result = document.getElementById("result");
 const searchBtn = document.getElementById("searchBtn");
 const createBtn = document.getElementById("createBtn");
 const loginBtn = document.getElementById("loginBtn");
+const showAllBtn = document.getElementById("showAllBtn");
 
 let isAdmin = false;
 
@@ -48,6 +49,96 @@ loginBtn.addEventListener("click", () => {
   }
 
 });
+
+
+
+
+// ALLE FEHLER ANZEIGEN
+
+showAllBtn.addEventListener("click", async () => {
+
+  if(!isAdmin) {
+
+    alert("Nur für Admins");
+    return;
+  }
+
+  result.innerHTML = "Lade alle Fehler...";
+
+  const querySnapshot = await getDocs(
+    collection(db, "fehler")
+  );
+
+  result.innerHTML = "";
+
+  querySnapshot.forEach((fireDoc) => {
+
+    const data = fireDoc.data();
+
+    result.innerHTML += `
+
+      <div class="result-card">
+
+        <h2>${data.code}</h2>
+
+        <p>
+          <strong>Anlage:</strong>
+          ${data.plant}
+        </p>
+
+        <p>
+          <strong>Fehler:</strong>
+          ${data.title}
+        </p>
+
+        <p>
+          <strong>Lösung:</strong>
+          ${data.solution}
+        </p>
+
+        <button
+          class="delete-btn"
+          data-id="${fireDoc.id}"
+        >
+          Fehler löschen
+        </button>
+
+      </div>
+
+    `;
+  });
+
+  activateDeleteButtons();
+
+});
+
+
+
+
+// DELETE BUTTONS
+
+function activateDeleteButtons() {
+
+  const deleteButtons =
+    document.querySelectorAll(".delete-btn");
+
+  deleteButtons.forEach((button) => {
+
+    button.addEventListener("click", async () => {
+
+      const id = button.dataset.id;
+
+      await deleteDoc(doc(db, "fehler", id));
+
+      alert("Fehler gelöscht");
+
+      button.parentElement.remove();
+
+    });
+
+  });
+
+}
 
 
 
@@ -114,48 +205,12 @@ searchBtn.addEventListener("click", async () => {
             ${data.solution}
           </p>
 
-          ${isAdmin ? `
-
-            <button
-              class="delete-btn"
-              data-id="${fireDoc.id}"
-            >
-              Fehler löschen
-            </button>
-
-          ` : ""}
-
         </div>
 
       `;
     }
 
   });
-
-
-
-  // DELETE BUTTONS
-
-  const deleteButtons =
-    document.querySelectorAll(".delete-btn");
-
-  deleteButtons.forEach((button) => {
-
-    button.addEventListener("click", async () => {
-
-      const id = button.dataset.id;
-
-      await deleteDoc(doc(db, "fehler", id));
-
-      alert("Fehler gelöscht");
-
-      button.parentElement.remove();
-
-    });
-
-  });
-
-
 
   if(!found) {
 
@@ -277,46 +332,12 @@ plantButtons.forEach((button) => {
               ${data.solution}
             </p>
 
-            ${isAdmin ? `
-
-              <button
-                class="delete-btn"
-                data-id="${fireDoc.id}"
-              >
-                Fehler löschen
-              </button>
-
-            ` : ""}
-
           </div>
 
         `;
       }
 
     });
-
-
-
-    const deleteButtons =
-      document.querySelectorAll(".delete-btn");
-
-    deleteButtons.forEach((button) => {
-
-      button.addEventListener("click", async () => {
-
-        const id = button.dataset.id;
-
-        await deleteDoc(doc(db, "fehler", id));
-
-        alert("Fehler gelöscht");
-
-        button.parentElement.remove();
-
-      });
-
-    });
-
-
 
     if(!found) {
 
