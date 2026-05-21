@@ -156,8 +156,8 @@ loginBtn.addEventListener("click", () => {
     document.getElementById("adminPass").value;
 
   if(
-    user === "admin" &&
-    pass === "1234"
+    user === "Obelix" &&
+    pass === "08152188"
   ) {
 
     isAdmin = true;
