@@ -4,7 +4,9 @@ import {
   getFirestore,
   collection,
   addDoc,
-  getDocs
+  getDocs,
+  deleteDoc,
+  doc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const db = getFirestore(app);
@@ -13,6 +15,40 @@ const result = document.getElementById("result");
 
 const searchBtn = document.getElementById("searchBtn");
 const createBtn = document.getElementById("createBtn");
+const loginBtn = document.getElementById("loginBtn");
+
+let isAdmin = false;
+
+
+
+// ADMIN LOGIN
+
+loginBtn.addEventListener("click", () => {
+
+  const user =
+    document.getElementById("adminUser").value;
+
+  const pass =
+    document.getElementById("adminPass").value;
+
+  if(
+    user === "admin" &&
+    pass === "1234"
+  ) {
+
+    isAdmin = true;
+
+    document.getElementById(
+      "loginStatus"
+    ).innerText = "Admin erfolgreich eingeloggt";
+
+  } else {
+
+    alert("Falsche Login Daten");
+  }
+
+});
+
 
 
 
@@ -35,9 +71,9 @@ searchBtn.addEventListener("click", async () => {
 
   let found = false;
 
-  querySnapshot.forEach((doc) => {
+  querySnapshot.forEach((fireDoc) => {
 
-    const data = doc.data();
+    const data = fireDoc.data();
 
     const code = data.code?.toLowerCase() || "";
     const title = data.title?.toLowerCase() || "";
@@ -78,12 +114,48 @@ searchBtn.addEventListener("click", async () => {
             ${data.solution}
           </p>
 
+          ${isAdmin ? `
+
+            <button
+              class="delete-btn"
+              data-id="${fireDoc.id}"
+            >
+              Fehler löschen
+            </button>
+
+          ` : ""}
+
         </div>
 
       `;
     }
 
   });
+
+
+
+  // DELETE BUTTONS
+
+  const deleteButtons =
+    document.querySelectorAll(".delete-btn");
+
+  deleteButtons.forEach((button) => {
+
+    button.addEventListener("click", async () => {
+
+      const id = button.dataset.id;
+
+      await deleteDoc(doc(db, "fehler", id));
+
+      alert("Fehler gelöscht");
+
+      button.parentElement.remove();
+
+    });
+
+  });
+
+
 
   if(!found) {
 
@@ -99,6 +171,7 @@ searchBtn.addEventListener("click", async () => {
   }
 
 });
+
 
 
 
@@ -175,9 +248,9 @@ plantButtons.forEach((button) => {
 
     let found = false;
 
-    querySnapshot.forEach((doc) => {
+    querySnapshot.forEach((fireDoc) => {
 
-      const data = doc.data();
+      const data = fireDoc.data();
 
       if(data.plant === selectedPlant) {
 
@@ -204,12 +277,46 @@ plantButtons.forEach((button) => {
               ${data.solution}
             </p>
 
+            ${isAdmin ? `
+
+              <button
+                class="delete-btn"
+                data-id="${fireDoc.id}"
+              >
+                Fehler löschen
+              </button>
+
+            ` : ""}
+
           </div>
 
         `;
       }
 
     });
+
+
+
+    const deleteButtons =
+      document.querySelectorAll(".delete-btn");
+
+    deleteButtons.forEach((button) => {
+
+      button.addEventListener("click", async () => {
+
+        const id = button.dataset.id;
+
+        await deleteDoc(doc(db, "fehler", id));
+
+        alert("Fehler gelöscht");
+
+        button.parentElement.remove();
+
+      });
+
+    });
+
+
 
     if(!found) {
 
