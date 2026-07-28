@@ -157,7 +157,7 @@ loginBtn.addEventListener("click", () => {
 
   if(
     user === "Obelix" &&
-    pass === "08152188"
+    pass === "0815"
   ) {
 
     isAdmin = true;
